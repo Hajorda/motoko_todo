@@ -13,6 +13,7 @@ Debug.print("Assistant actor created");
     completed: Bool; 
   };
 
+
   func natHash(n : Nat) : Hash.Hash { 
     Text.hash(Nat.toText(n))
   };
@@ -24,7 +25,7 @@ Debug.print("Assistant actor created");
     Iter.toArray(todos.vals());
   };
 
-  // Returns the ID that was given to the ToDo item
+
   public func addTodo(description : Text) : async Nat {
     let id = nextId;
     todos.put(id, { description = description; completed = false });
@@ -32,10 +33,19 @@ Debug.print("Assistant actor created");
     id
   };
 
+
+
   public func completeTodo(id : Nat) : async () {
     ignore do ? {
       let description = todos.get(id)!.description;
       todos.put(id, { description; completed = true });
+    }
+  };
+
+  public func uncompleteTodo(id : Nat) : async () {
+    ignore do ? {
+      let description = todos.get(id)!.description;
+      todos.put(id, { description; completed = false });
     }
   };
 
@@ -48,8 +58,12 @@ Debug.print("Assistant actor created");
     output # "\n"
   };
 
+
+
   public func clearCompleted() : async () {
     todos := Map.mapFilter<Nat, ToDo, ToDo>(todos, Nat.equal, natHash, 
               func(_, todo) { if (todo.completed) null else ?todo });
   };
+
+
 }
